@@ -3,10 +3,17 @@ This is my docker compose for locally hosted projects so that I don't have to re
 ## General
 Create a `.env` with:
 ```.env
+PG_HOST=postgres
 PG_USER=nick
 PG_PASS=<secret postgres password>
+
 PGADMIN_EMAIL=<web login username>
 PGADMIN_PASS=<web login password>
+
+SECRET_KEY = 'django-insecure-abcdefghijklmnop'
+
+TUNNEL_ID=<tunnel UUID>
+TUNNEL_TOKEN=<super secret tunnel>
 ```
 
 To run:
