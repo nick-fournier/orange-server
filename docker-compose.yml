@@ -52,7 +52,7 @@ services:
      - db:/var/lib/postgresql/data
 
   pgadmin:
-    image: dpage/pgadmin4:latest
+    image: dpage/pgadmin4:8.14.0
     container_name: orange-pgadmin
     restart: unless-stopped
     environment:
