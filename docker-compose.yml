@@ -1,7 +1,7 @@
 services:
   web:
     image: nichfournier/launchpad-web:latest
-    container_name: orange-web
+    container_name: web
     ports:
       - "9000:9000"
     env_file:
@@ -16,7 +16,7 @@ services:
 
   nginx:
     image: nginx:1.27.3-perl
-    container_name: orange-nginx
+    container_name: nginx
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - static_volume:/app/staticfiles
@@ -28,7 +28,7 @@ services:
 
   tunnel:
     image: cloudflare/cloudflared:2024.12.2
-    container_name: orange-tunnel
+    container_name: tunnel
     command: tunnel --no-autoupdate --config /app/config.yml run
     volumes:
       - ./tunnel.yml:/app/config.yml
@@ -43,7 +43,7 @@ services:
 
   postgres:
     image: postgres:16-alpine
-    container_name: orange-postgres
+    container_name: postgres
     restart: unless-stopped
     env_file: .env
     environment:
@@ -56,13 +56,32 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:8.14.0
-    container_name: orange-pgadmin
+    container_name: pgadmin
     restart: unless-stopped
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASS}
     ports:
       - 8080:80
+  
+  #docker run -d --restart="always"
+  # -p 61208-61209:61208-61209
+  # -e TZ="${TZ}" -e GLANCES_OPT="-w"
+  # -v /var/run/docker.sock:/var/run/docker.sock:ro -v /run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock:ro
+  # --pid host nicolargo/glances:latest-full
+  glances:
+    image: nicolargo/glances:latest-full
+    container_name: glances
+    restart: always
+    ports:
+      - "61208-61209:61208-61209"
+    environment:
+      - TZ=${TZ}
+      - GLANCES_OPT=-w  # Enable the web interface
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock:ro
+    pid: host
 
 volumes:
   static_volume:
