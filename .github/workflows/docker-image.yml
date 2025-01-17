@@ -1,0 +1,35 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Checkout the code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive  # Initialize and update submodules
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+      with:
+        use-new-builder: true
+
+    - name: Build the Docker images for amd64/arm64
+      run: |
+        docker buildx build ./nginx --file ./nginx/Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/launchpad-nginx:latest --platform linux/amd64,linux/arm64 --push
+        docker buildx build ./tunnel --file ./tunnel/Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/launchpad-tunnel:latest --platform linux/amd64,linux/arm64 --push
