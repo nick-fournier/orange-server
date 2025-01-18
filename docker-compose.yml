@@ -1,3 +1,5 @@
+name: orange-server
+
 services:
   web:
     image: nichfournier/launchpad-web:latest
@@ -13,6 +15,8 @@ services:
       - media_volume:/app/mediafiles
     depends_on:
       - postgres
+    networks:
+      - orange-network
 
   nginx:
     image: nginx:1.27.3-perl
@@ -25,6 +29,8 @@ services:
       - "80:80"
     depends_on:
       - web
+    networks:
+      - orange-network
 
   tunnel:
     image: cloudflare/cloudflared:2024.12.2
@@ -40,6 +46,9 @@ services:
       - web
     restart: unless-stopped
     hostname: launchpad.nicholasfournier.com
+    networks:
+      - orange-network
+      - osrm-network
 
   postgres:
     image: postgres:16-alpine
@@ -52,7 +61,9 @@ services:
     ports:
       - "5432:5432"
     volumes:
-     - db:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
+    networks:
+      - orange-network
 
   pgadmin:
     image: dpage/pgadmin4:8.14.0
@@ -63,12 +74,9 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASS}
     ports:
       - 8080:80
-  
-  #docker run -d --restart="always"
-  # -p 61208-61209:61208-61209
-  # -e TZ="${TZ}" -e GLANCES_OPT="-w"
-  # -v /var/run/docker.sock:/var/run/docker.sock:ro -v /run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock:ro
-  # --pid host nicolargo/glances:latest-full
+    networks:
+      - orange-network
+
   glances:
     image: nicolargo/glances:latest-full
     container_name: glances
@@ -87,3 +95,10 @@ volumes:
   static_volume:
   media_volume:
   db:
+
+networks:
+  orange-network:
+    driver: bridge
+    name: orange-network
+  osrm-network:
+    external: true
