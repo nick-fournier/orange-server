@@ -22,7 +22,7 @@ services:
     image: nginx:1.27.3-perl
     container_name: nginx
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx.conf:/etc/nginx/nginx.conf
       - static_volume:/app/staticfiles
       - media_volume:/app/mediafiles
     ports:
@@ -82,7 +82,8 @@ services:
     container_name: glances
     restart: always
     ports:
-      - "61208-61209:61208-61209"
+      # - "61208-61209:61208-61209"
+      - "61208:61208"
     environment:
       - TZ=${TZ}
       - GLANCES_OPT=-w  # Enable the web interface
@@ -90,6 +91,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock:ro
     pid: host
+    networks:
+      - orange-network
 
 volumes:
   static_volume:
