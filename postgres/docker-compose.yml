@@ -1,26 +1,32 @@
+name: thinkbox-db
+
 services:
   postgres:
-    image: postgres:16-alpine
-    container_name: orange-postgres
+    build: .
+    container_name: thinkbox-postgres
     restart: unless-stopped
     env_file: .env
     environment:
       - POSTGRES_USER=${PG_USER}
       - POSTGRES_PASSWORD=${PG_PASS}
+      - POSTGRES_DB=${PG_DBNAME}
     ports:
       - "5432:5432"
     volumes:
-     - db:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
+      - ${BACKUP_PATH}:/backups
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: orange-pgadmin
+    container_name: thinkbox-pgadmin
     restart: unless-stopped
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASS}
     ports:
       - 8080:80
+    command: ["pgagent", "-f", "/etc/pgagent/pgagent.conf"]
+
 
 volumes:
-  db:
+  pg_data:
