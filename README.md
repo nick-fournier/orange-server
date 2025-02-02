@@ -28,3 +28,12 @@ We could login and use psql to set things up with a script. But we also can use 
 2. Login with the credentials set in the .env
 3. Register a new server with the hostname `postgres` (must match the service in docker compose), and the username and password from the .env file.
 4. Create a database.
+
+
+## Building postgres
+
+Build clean image from scratch:
+`docker compose -f docker-compose.build.yml build --no-cache`
+
+Build and run:
+`docker compose -f docker-compose.yml -f docker-compose.build.yml up -d`
