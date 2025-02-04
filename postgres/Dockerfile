@@ -11,7 +11,7 @@ COPY backup.sh /usr/local/bin/backup.sh
 RUN chmod +x /usr/local/bin/backup.sh
 
 # Create a crontab file to schedule the backup job (daily at 2 AM Local Time UTC)
-RUN echo "18 6 * * * root /usr/local/bin/backup.sh >> /var/log/cron.log 2>&1" > /etc/cron.d/pg_backup
+RUN echo "0 11 * * * root /usr/local/bin/backup.sh >> /var/log/cron.log 2>&1" > /etc/cron.d/pg_backup
 
 # Give cron the appropriate permissions
 RUN chmod 0644 /etc/cron.d/pg_backup && chown root:root /etc/cron.d/pg_backup
