@@ -37,3 +37,9 @@ Build clean image from scratch:
 
 Build and run:
 `docker compose -f docker-compose.yml -f docker-compose.build.yml up -d`
+
+## Backup and restore
+There is an automated backup script that runs every day at 3am. It will backup the database to the `BACKUP_PATH` in the .env file.
+
+To restore a backup:
+`docker exec -i postgres pg_restore -U $PG_USER -d $PG_DB < /path/to/backup-date-time.sql`

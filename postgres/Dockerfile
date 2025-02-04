@@ -10,11 +10,11 @@ COPY backup.sh /usr/local/bin/backup.sh
 # Give execute permissions to the script
 RUN chmod +x /usr/local/bin/backup.sh
 
-# Create a crontab file to schedule the backup job (daily at 2 AM)
-RUN echo "0 2 * * * /usr/local/bin/backup.sh >> /var/log/cron.log 2>&1" > /etc/cron.d/pg_backup
+# Create a crontab file to schedule the backup job (daily at 2 AM Local Time UTC)
+RUN echo "18 6 * * * root /usr/local/bin/backup.sh >> /var/log/cron.log 2>&1" > /etc/cron.d/pg_backup
 
 # Give cron the appropriate permissions
-RUN chmod 0644 /etc/cron.d/pg_backup
+RUN chmod 0644 /etc/cron.d/pg_backup && chown root:root /etc/cron.d/pg_backup
 
-# Start cron in the background and PostgreSQL in the foreground
-CMD cron && docker-entrypoint.sh postgres
+# Start cron and PostgreSQL in the foreground
+CMD cron && tail -f /var/log/cron.log & docker-entrypoint.sh postgres
