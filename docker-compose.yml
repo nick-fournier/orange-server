@@ -4,6 +4,7 @@ services:
   web:
     image: nichfournier/launchpad-web:latest
     container_name: web
+    restart: unless-stopped
     ports:
       - "9000:9000"
     env_file:
@@ -19,6 +20,7 @@ services:
   nginx:
     image: nginx:1.27.3-perl
     container_name: nginx
+    restart: unless-stopped
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - static_volume:/app/staticfiles
@@ -51,7 +53,7 @@ services:
   glances:
     image: nicolargo/glances:latest-full
     container_name: glances
-    restart: always
+    restart: unless-stopped
     ports:
       # - "61208-61209:61208-61209"
       - "61208:61208"
